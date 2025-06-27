@@ -674,16 +674,20 @@ function isLooseListItem(node, options) {
 }
 
 function shouldPrePrintDoubleHardline({ node, previous, parent }, options) {
-  const isPrevNodeLooseListItem = isLooseListItem(previous, options);
-
-  if (isPrevNodeLooseListItem) {
+  if (
+    isLooseListItem(previous, options) ||
+    (node.type === "list" &&
+      parent.type === "listItem" &&
+      previous.type === "code")
+  ) {
     return true;
   }
 
   const isSequence = previous.type === node.type;
   const isSiblingNode = isSequence && SIBLING_NODE_TYPES.has(node.type);
   const isInTightListItem =
-    parent.type === "listItem" && !isLooseListItem(parent, options);
+    parent.type === "listItem" &&
+    (node.type === "list" || !isLooseListItem(parent, options));
   const isPrevNodePrettierIgnore = isPrettierIgnore(previous) === "next";
   const isBlockHtmlWithoutBlankLineBetweenPrevHtml =
     node.type === "html" &&
