@@ -659,12 +659,15 @@ function needsParens(path, options) {
         return true;
       }
 
-      /* Matches the following case in Flow:
-         ```
-         const a = (x: any): x is (number => string) => true;
-         ```
-         This case is not necessary in TS since `number => string` is not a valid
-         arrow type there.
+      /*
+      Matches the following case in Flow:
+
+      ```
+      const a = (x: any): x is (number => string) => true;
+      ```
+
+      This case is not necessary in TS since `number => string` is not a valid
+      arrow type there.
       */
       if (
         path.match(
@@ -718,7 +721,7 @@ function needsParens(path, options) {
       if (
         typeof node.value === "string" &&
         parent.type === "ExpressionStatement" &&
-        !parent.directive
+        typeof parent.directive !== "string"
       ) {
         // To avoid becoming a directive
         const grandParent = path.grandparent;

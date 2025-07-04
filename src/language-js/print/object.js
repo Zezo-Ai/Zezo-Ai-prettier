@@ -32,7 +32,7 @@ function printObject(path, options, print) {
 
   const isTypeAnnotation = node.type === "ObjectTypeAnnotation";
   const isEnumBody =
-    node.type === "TSEnumDeclaration" ||
+    node.type === "TSEnumBody" ||
     node.type === "EnumBooleanBody" ||
     node.type === "EnumNumberBody" ||
     node.type === "EnumBigIntBody" ||
@@ -159,8 +159,14 @@ function printObject(path, options, print) {
         ((lastElem.type === "TSPropertySignature" ||
           lastElem.type === "TSCallSignatureDeclaration" ||
           lastElem.type === "TSMethodSignature" ||
-          lastElem.type === "TSConstructSignatureDeclaration") &&
-          hasComment(lastElem, CommentCheckFlags.PrettierIgnore))))
+          lastElem.type === "TSConstructSignatureDeclaration" ||
+          lastElem.type === "TSIndexSignature") &&
+          hasComment(lastElem, CommentCheckFlags.PrettierIgnore)))) ||
+    // https://github.com/microsoft/TypeScript/issues/61916
+    path.match(
+      undefined,
+      (node, key) => node.type === "TSImportType" && key === "options",
+    )
   );
 
   let content;
